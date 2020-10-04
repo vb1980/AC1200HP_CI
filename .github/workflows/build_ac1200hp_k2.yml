@@ -1,4 +1,4 @@
-name: Build AC1200HP for K2
+name: Build AC1200HP_K2
 
 on: 
   release:
