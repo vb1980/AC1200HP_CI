@@ -17,7 +17,7 @@ env:
   FIRMWARE_PATH: /opt/firmwares
   UPLOAD_COWTRANSFER: true
   UPLOAD_WETRANSFER: false
-  SERVERCHAN_NOTIFICATION: true
+  SERVERCHAN_NOTIFICATION: false
 jobs:
   build:
     runs-on: ubuntu-16.04
