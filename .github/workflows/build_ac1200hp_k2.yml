@@ -17,6 +17,7 @@ env:
   FIRMWARE_PATH: /opt/firmwares
   UPLOAD_COWTRANSFER: true
   UPLOAD_WETRANSFER: false
+  SERVERCHAN_NOTIFICATION: true
 jobs:
   build:
     runs-on: ubuntu-16.04
@@ -48,6 +49,9 @@ jobs:
         cp -f Custom/patches/target.mak /opt/asus/release/src-rt/target.mak
         cp -f Custom/patches/ralink_spi.c /opt/asus/release/src-ra-mt7620/linux/linux-2.6.36.x/drivers/mtd/ralink/ralink_spi.c
         cp -f Custom/patches/ralink_bbu_spi.c /opt/asus/release/src-ra-mt7620/linux/linux-2.6.36.x/drivers/mtd/ralink/ralink_bbu_spi.c
+        cp -f Custom/patches/extendno.conf /opt/asus/release/src-rt/router/extendno.conf
+        cp -f Custom/patches/CN.dict /opt/asus/release/src-rt/router/www/CN.dict
+        cp -f Custom/patches/EN.dict /opt/asus/release/src-rt/router/www/EN.dict
     - name: Build firmware
       run: |
         cp -f Custom/build.sh /opt/asus/build.sh
@@ -60,7 +64,7 @@ jobs:
         mkdir -p $FIRMWARE_PATH/
         cd /opt/asus/release/src-ra-mt7620/image
         for firmwarefile in $(ls *.trx)
-        do sudo mv $firmwarefile $FIRMWARE_PATH/$firmwarefile
+        do sudo mv $firmwarefile $FIRMWARE_PATH/AC1200HP_For_K2.trx
         done
         cd $FIRMWARE_PATH
         echo "::set-env name=FIRMWARE::$PWD"
@@ -77,9 +81,14 @@ jobs:
         curl -fsSL git.io/file-transfer | sh
         ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-env name=DOWNLOADURL::$(cat cowtransfer.log | grep https)"
     - name: Upload firmware to WeTransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true'
       run: |
         curl -fsSL git.io/file-transfer | sh
         ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
         echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+    - name: ServerChan Notification
+      if: steps.organize.outputs.status == 'success' && env.SERVERCHAN_NOTIFICATION == 'true'
+      run: |
+        curl -s "http://sc.ftqq.com/${{ secrets.SCKEY }}.send?text=Build_Completed" --data-urlencode "&desp=${{DOWNLOADURL}}"
