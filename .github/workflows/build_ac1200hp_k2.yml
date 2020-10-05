@@ -91,4 +91,4 @@ jobs:
     - name: ServerChan Notification
       if: steps.organize.outputs.status == 'success' && env.SERVERCHAN_NOTIFICATION == 'true'
       run: |
-        curl -s "http://sc.ftqq.com/${{ secrets.SCKEY }}.send?text=Build_Completed" --data-urlencode "&desp=${{DOWNLOADURL}}"
+        curl -s "http://sc.ftqq.com/${{ secrets.SCKEY }}.send?text=Build_Completed" --data-urlencode "&desp=${{env.DOWNLOADURL}}"
