@@ -49,9 +49,10 @@ jobs:
         cp -f Custom/patches/target.mak /opt/asus/release/src-rt/target.mak
         cp -f Custom/patches/ralink_spi.c /opt/asus/release/src-ra-mt7620/linux/linux-2.6.36.x/drivers/mtd/ralink/ralink_spi.c
         cp -f Custom/patches/ralink_bbu_spi.c /opt/asus/release/src-ra-mt7620/linux/linux-2.6.36.x/drivers/mtd/ralink/ralink_bbu_spi.c
-        cp -f Custom/patches/extendno.conf /opt/asus/release/src-rt/router/extendno.conf
-        cp -f Custom/patches/CN.dict /opt/asus/release/src-rt/router/www/CN.dict
-        cp -f Custom/patches/EN.dict /opt/asus/release/src-rt/router/www/EN.dict
+        cp -f Custom/patches/extendno.conf /opt/asus/release/src/router/extendno.conf
+        cp -f Custom/patches/CN.dict /opt/asus/release/src/router/www/CN.dict
+        cp -f Custom/patches/EN.dict /opt/asus/release/src/router/www/EN.dict
+        cp -f Custom/patches/asustitle.png /opt/asus/release/src/router/www/images/New_ui/asustitle.png
     - name: Build firmware
       run: |
         cp -f Custom/build.sh /opt/asus/build.sh
