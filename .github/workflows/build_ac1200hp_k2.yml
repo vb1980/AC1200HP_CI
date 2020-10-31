@@ -64,7 +64,7 @@ jobs:
       run: |
         mkdir -p $FIRMWARE_PATH/
         cd /opt/asus/release/src-ra-mt7620/image
-        for firmwarefile in $(ls *.trx)
+        for firmwarefile in $(ls RT-AC1200HP_3.0.0.4*.trx)
         do sudo mv -f $firmwarefile $FIRMWARE_PATH/RT_AC1200HP_K2.trx
         done
         cd $FIRMWARE_PATH
