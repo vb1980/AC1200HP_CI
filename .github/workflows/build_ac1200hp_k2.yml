@@ -1,6 +1,12 @@
 name: Build AC1200HP_K2
 
 on: 
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Build_ChongshengB_Padavan'
+        required: true
+        default: 'build'
   release:
     types: [published]
   push:
@@ -81,15 +87,32 @@ jobs:
       run: |
         curl -fsSL git.io/file-transfer | sh
         ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "DOWNLOADURL=$(cat cowtransfer.log | grep https)" >> $GITHUB_ENV
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+        echo "COWTRANSFER_URL=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
     - name: Upload firmware to WeTransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true'
       run: |
         curl -fsSL git.io/file-transfer | sh
         ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+        echo "WETRANSFER_URL=$(cat wetransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
     - name: ServerChan Notification
+      uses: emon100/Action-Serverchan@master
       if: steps.organize.outputs.status == 'success' && env.SERVERCHAN_NOTIFICATION == 'true'
-      run: |
-        curl -s "http://sc.ftqq.com/${{ secrets.SCKEY }}.send?text=Build_Completed" --data-urlencode "&desp=${DOWNLOADURL}"
+      with:
+        SCKEY: ${{ secrets.SCKEY }}
+        text: RT_AC1200HP_K2_Build_Completed
+        desp: Congratulations,
+              
+              
+              Your **RT_AC1200HP_K2** firmware build completed!
+              
+              
+              🐮CowTransfer Download Url:${{ env.COWTRANSFER_URL }}
+              
+              
+              Enjoy it🎈🎁!
+              
+              
+              
+
